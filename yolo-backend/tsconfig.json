@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es6"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs",
+    "baseUrl": "./src",  // Definindo a baseUrl para a pasta src
+    "paths": {
+      "@/*": ["*"]  // Resolve o alias @ para a pasta src
+    },
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "build",
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true
+  }
+}
