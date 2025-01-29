@@ -72,12 +72,14 @@ O projeto está dividido em duas partes principais:
    Execute o script de seed:
 
    ```bash
+   cd yolo-backend
    npm run seed
    ```
 
 5. **Inicie o servidor backend**:
 
    ```bash
+   cd yolo-backend
    npm run dev
    ```
    O backend estará exposto em `http://localhost:3001`.
