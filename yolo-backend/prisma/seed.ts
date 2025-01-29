@@ -37,7 +37,7 @@ const seed = async () => {
                     },
                 });
             } else {
-                console.log(`Pessoa com e-mail ${person["E-mail"]} já existe. Pulando...`);
+                console.log(`Person with an existing email address ${person["E-mail"]} already. Jumping...`);
             }
         }
 

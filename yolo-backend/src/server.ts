@@ -84,24 +84,19 @@ fastify.put<{ Params: { id: string } }>("/:id", async (request, reply) => {
 
 
 
-// Delete
-fastify.delete<{ Params: { type: string } }>("/:type", async (request, reply) => {
+// Delete by ID
+fastify.delete<{ Params: { id: string } }>("/:id", async (request, reply) => {
     try {
-        const { type } = request.params;
-        const deletedPeople = await prisma.person.deleteMany({
-            where: { type },
+        const { id } = request.params;
+        await prisma.person.delete({
+            where: { id: Number(id) },
         });
-
-        if (deletedPeople.count === 0) {
-            reply.status(404).send({ error: "No people found with the given type to delete" });
-            return;
-        }
-
-        reply.send({ message: "People deleted successfully!" });
+        reply.send({ message: "Person deleted successfully!" });
     } catch (err) {
         reply.status(500).send({ error: (err instanceof Error ? err.message : "Unknown error") });
     }
 });
+
 
 const PORT = 3001;
 fastify.listen({ port: PORT }, (err) => {
