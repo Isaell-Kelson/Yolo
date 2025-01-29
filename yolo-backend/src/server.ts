@@ -1,7 +1,13 @@
 import Fastify from "fastify";
+import fastifyCors from "@fastify/cors";
 import { prisma } from "@/services/prisma-service";
 
+
 const fastify = Fastify();
+
+fastify.register(fastifyCors, {
+    origin: "*",
+});
 
 // Get
 fastify.get("/", async (request, reply) => {
@@ -18,7 +24,7 @@ fastify.get<{ Params: { type: string } }>("/:type", async (request, reply) => {
     try {
         const { type } = request.params;
         const people = await prisma.person.findMany({
-            where: { type }, // Filtro por tipo
+            where: { type },
         });
 
         if (people.length === 0) {
@@ -53,30 +59,30 @@ fastify.post("/", async (request, reply) => {
 });
 
 // Put
-fastify.put<{ Params: { type: string } }>("/:type", async (request, reply) => {
+fastify.put<{ Params: { id: string } }>("/:id", async (request, reply) => {
     try {
-        const { type } = request.params;
+        const { id } = request.params;
         const updates = request.body as Partial<{
             name: string;
             email: string;
             phone: string;
         }>;
 
-        const updatedPeople = await prisma.person.updateMany({
-            where: { type },
+        const updatedPerson = await prisma.person.update({
+            where: { id: Number(id) },
             data: updates,
         });
 
-        if (updatedPeople.count === 0) {
-            reply.status(404).send({ error: "No people found with the given type to update" });
-            return;
-        }
-
-        reply.send(updatedPeople);
+        reply.send(updatedPerson);
     } catch (err) {
         reply.status(500).send({ error: (err instanceof Error ? err.message : "Unknown error") });
     }
 });
+
+
+
+
+
 
 // Delete
 fastify.delete<{ Params: { type: string } }>("/:type", async (request, reply) => {
@@ -97,7 +103,7 @@ fastify.delete<{ Params: { type: string } }>("/:type", async (request, reply) =>
     }
 });
 
-const PORT = 3000;
+const PORT = 3001;
 fastify.listen({ port: PORT }, (err) => {
     if (err) {
         console.error(err);
