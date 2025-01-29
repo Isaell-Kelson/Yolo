@@ -4,7 +4,7 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 
 export const handler: APIGatewayProxyHandler = async (event) => {
     try {
-        const id = event.pathParameters?.id;
+        const id = event.pathParameters?.id ? parseInt(event.pathParameters.id) : null;
         if (!id) return error("ID not provided", 400);
 
         await prisma.person.delete({ where: { id } });
