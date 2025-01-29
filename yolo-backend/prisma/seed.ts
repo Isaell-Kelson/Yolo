@@ -1,9 +1,20 @@
+/**
+ * @file Script de seed para popular o banco de dados com dados de uma API externa.
+ */
+
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const seed = async () => {
+/**
+ * Popula o banco de dados com dados de uma API externa.
+ *
+ * @async
+ * @function seed
+ * @returns {Promise<void>} Resolve quando o processo de seed for concluído.
+ */
+const seed = async (): Promise<void> => {
     try {
         // Excluindo todos os dados da tabela Person
         await prisma.person.deleteMany();
@@ -14,10 +25,11 @@ const seed = async () => {
         const API_URL = "https://3ji5haxzr9.execute-api.us-east-1.amazonaws.com/dev/caseYolo";
         const response = await axios.get(API_URL);
 
-        const people = response.data.body ? JSON.parse(response.data.body).clientes : [];
+        /** @type {Array<{ Nome: string, "E-mail": string, "Telefone": string, Tipo: string }>} */
+        const people: Array<{ Nome: string; "E-mail": string; "Telefone": string; Tipo: string; }> = response.data.body ? JSON.parse(response.data.body).clientes : [];
 
         if (!Array.isArray(people)) {
-            throw new Error("Data is not an array");
+            throw new Error("Os dados não estão em formato de array");
         }
 
         for (const person of people) {
@@ -43,10 +55,11 @@ const seed = async () => {
 
         console.log("Database seeded!");
     } catch (error) {
-        console.error("Error seeding data:", error);
+        console.error("Error:", error);
     } finally {
         await prisma.$disconnect();
     }
 };
 
-seed().then(r => r);
+// Executa a função de seed
+seed().then((r) => r);
