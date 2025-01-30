@@ -6,8 +6,6 @@ import AddButton from "@/src/components/add-button";
 import PersonForm from "@/src/components/person-form";
 import PersonCard from "@/src/components/person-card";
 
-
-
 type Person = {
     createdAt: string;
     id: number;
@@ -31,7 +29,7 @@ export default function Page() {
     });
     const [editingPerson, setEditingPerson] = useState<Person | null>(null);
     const [filterType, setFilterType] = useState<string>("");
-    const [isLoaded, setIsLoaded] = useState(false);
+
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const fetchPeople = async () => {
@@ -39,7 +37,6 @@ export default function Page() {
             const response = await axios.get("http://localhost:3001/");
             setPeople(response.data);
             setFilteredPeople(response.data);
-            setIsLoaded(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Unknown error");
         }
@@ -47,10 +44,7 @@ export default function Page() {
 
     const addPerson = async (person: Person) => {
         try {
-            const response = await axios.post("http://localhost:3001/", {
-                ...person,
-                type: capitalizeFirstLetter(person.type),
-            });
+            const response = await axios.post("http://localhost:3001/", person);
             setPeople([...people, response.data]);
             setFilteredPeople([...filteredPeople, response.data]);
             setNewPerson({ id: 0, name: "", email: "", phone: "", type: "", createdAt: "" });
@@ -62,14 +56,9 @@ export default function Page() {
 
     const updatePerson = async (person: Person) => {
         try {
-            const response = await axios.put(`http://localhost:3001/${person.id}`, {
-                ...person,
-                type: capitalizeFirstLetter(person.type),
-            });
-
+            const response = await axios.put(`http://localhost:3001/${person.id}`, person);
             setPeople(people.map((p) => (p.id === person.id ? response.data : p)));
             setFilteredPeople(filteredPeople.map((p) => (p.id === person.id ? response.data : p)));
-
             setEditingPerson(null);
             setIsFormOpen(false);
         } catch (err) {
@@ -97,25 +86,23 @@ export default function Page() {
         }
     };
 
-    const capitalizeFirstLetter = (str: string): string => {
-        if (str.length === 0) return str;
-        return str[0].toLocaleUpperCase("pt-BR") + str.slice(1);
-    };
-
     useEffect(() => {
-        fetchPeople().then((r) => r);
+        fetchPeople().then(r => r);
     }, []);
 
-    if (!isLoaded) {
-        return <div>Loading...</div>;
-    }
+    const onAddNew = () => {
+        setNewPerson({ id: 0, name: "", email: "", phone: "", type: "", createdAt: "" });
+        setEditingPerson(null);
+        setIsFormOpen(true);
+    };
+
 
     return (
         <div className="min-h-screen bg-gray-50 p-8">
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-end items-center mb-6 gap-4">
                     <TypeFilter filterType={filterType} onFilterChange={filterByType} />
-                    <AddButton onClick={() => setIsFormOpen(true)} />
+                    <AddButton onClick={onAddNew} />
                 </div>
 
                 {error && <p className="text-red-500">{error}</p>}
@@ -133,7 +120,9 @@ export default function Page() {
                                 person={editingPerson || newPerson}
                                 onSave={(person) => (editingPerson ? updatePerson(person) : addPerson(person))}
                                 onCancel={() => setIsFormOpen(false)}
+                                onAddNew={onAddNew}
                             />
+
                         </div>
                     </div>
                 )}
