@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mona-health/react-input-mask": "^3.0.3",
     "axios": "^1.7.9",
     "fastify-cors": "^6.0.3",
     "lucide-react": "^0.474.0",

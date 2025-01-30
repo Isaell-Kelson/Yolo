@@ -1,4 +1,5 @@
 import React from "react";
+import InputMask from "@mona-health/react-input-mask";
 
 type Person = {
     id: number;
@@ -61,11 +62,11 @@ export default function PersonForm({ person, onSave, onCancel }: PersonFormProps
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Telefone</label>
-                    <input
-                        type="text"
-                        placeholder="Telefone"
+                    <InputMask
+                        mask="+99 99 99999-9999"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setPhone(e.target.value)}
+                        placeholder="+99 99 99999-9999"
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2"
                     />
                 </div>
